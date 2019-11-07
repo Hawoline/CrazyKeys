@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 import ru.hawoline.crazykeys.model.Quiz;
 
@@ -25,10 +26,9 @@ public class KeyboardGame extends VBox {
 
     private Quiz[] gameQuizzes;
 
-    private int time;
-
     public KeyboardGame() {
         keyBoardTextLabel = new Label("");
+        keyBoardTextLabel.setFont(new Font(30));
 
         Image image = new Image(getClass().getResourceAsStream("res/img/keyboard.png"));
         keyBoardIV = new ImageView(image);
@@ -46,10 +46,11 @@ public class KeyboardGame extends VBox {
         }
 
         questionLabel = new Label(gameQuizzes[0].getQuestion());
+        questionLabel.setFont(new Font(20));
 
         setAlignment(Pos.CENTER);
 
-        getChildren().addAll(questionLabel, keyBoardTextLabel);
+        getChildren().addAll(questionLabel, keyBoardTextLabel, keyBoardIV);
         showKeyboard();
     }
 
@@ -83,20 +84,13 @@ public class KeyboardGame extends VBox {
     }
 
     public void showKeyboard(){
-        getChildren().add(keyBoardIV);
+        keyBoardIV.setVisible(true);
 
-        time = 10;
-
-        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.setCycleCount(1);
         timeline.getKeyFrames().add(
-                new KeyFrame(Duration.seconds(1),
+                new KeyFrame(Duration.seconds(10),
                         (EventHandler<ActionEvent>) event1 -> {
-                            time--;
-
-                            if (time <= 0) {
-                                getChildren().remove(keyBoardIV);
-                                timeline.stop();
-                            }
+                            keyBoardIV.setVisible(false);
                         }));
         timeline.playFromStart();
     }
@@ -112,13 +106,13 @@ public class KeyboardGame extends VBox {
         for (int i = 0; i < countOfNewQuestions; i++){
             int selectedIndex = random.nextInt(initialArray.length);
             newQuestions[i] = initialArray[selectedIndex];
-            initialArray = removeItemFromQuizz(initialArray, selectedIndex);
+            initialArray = removeItemFromQuiz(initialArray, selectedIndex);
         }
 
         return newQuestions;
     }
 
-    private Quiz[] removeItemFromQuizz(Quiz[] array, int index){
+    private Quiz[] removeItemFromQuiz(Quiz[] array, int index){
         Quiz[] arrayWithRemovedItem = new Quiz[array.length - 1];
         array[index] = array[array.length - 1];
         arrayWithRemovedItem = Arrays.copyOf(array, arrayWithRemovedItem.length);

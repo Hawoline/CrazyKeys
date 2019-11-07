@@ -14,6 +14,8 @@ public class CrazyKeys {
     private MediaPlayer looseMP;
     private MediaPlayer correctMP;
     private MediaPlayer mistakeMP;
+    private MediaPlayer sprintMP;
+    private MediaPlayer screenSaverMP;
 
     private int mistake;
 
@@ -25,6 +27,8 @@ public class CrazyKeys {
         looseMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/loose.mp3");
         correctMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/correct.mp3");
         mistakeMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/mistake.mp3");
+        sprintMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/sprint.mp3");
+        screenSaverMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/screen_saver.mp3");
 
         text = "";
     }
@@ -83,6 +87,22 @@ public class CrazyKeys {
 
     public void setMistake(int mistake) {
         this.mistake = mistake;
+    }
+
+    public MediaPlayer getSprintMP() {
+        return sprintMP;
+    }
+
+    public void setSprintMP(MediaPlayer sprintMP) {
+        this.sprintMP = sprintMP;
+    }
+
+    public MediaPlayer getScreenSaverMP() {
+        return screenSaverMP;
+    }
+
+    public void setScreenSaverMP(MediaPlayer screenSaverMP) {
+        this.screenSaverMP = screenSaverMP;
     }
 
     public void addSymbol(char symbol){

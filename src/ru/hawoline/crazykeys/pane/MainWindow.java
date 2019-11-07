@@ -13,6 +13,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -28,6 +29,7 @@ public class MainWindow extends Application {
     private Label timerLabel;
     private Label mistakeLabel;
     private Label scoreLabel;
+    private AnchorPane anchorPane;
 
     private CrazyKeys crazyKeys;
     private Timeline timeline;
@@ -79,7 +81,8 @@ public class MainWindow extends Application {
                         "Нательник, сшитый бабушкой,\n" +
                         "Кто же это?",
                 "Программы стоит обновить Компьютер долго будет жить, А чтобы жизнь его не сбилась, Не подпускай к порогу…",
-                "Не каждый совершить сумеет сам Процесс создания компьютерных программ. Искусство это тщательно планируем, А сам процесс зовется…",
+                "Не каждый совершить сумеет сам Процесс создания компьютерных программ. \n" +
+                        "Искусство это тщательно планируем, А сам процесс зовется…",
                 "Свет даёт он и тепло,\n" +
                         "С ним уютно и светло,\n" +
                         "Он по проводам бежит,\n" +
@@ -121,12 +124,17 @@ public class MainWindow extends Application {
                 "Разработчик: Нелтанов Биликто, ЭТФ, ПИ, Б669.";
         helloLabel = new Label(hello);
         helloLabel.setTextAlignment(TextAlignment.CENTER);
+        helloLabel.setFont(new Font(25));
 
         mistakeLabel = new Label("");
         timerLabel = new Label("");
         scoreLabel = new Label("Очки: " + score);
 
-        AnchorPane anchorPane = new AnchorPane();
+        mistakeLabel.setFont(new Font(25));
+        timerLabel.setFont(new Font(25));
+        scoreLabel.setFont(new Font(25));
+
+        anchorPane = new AnchorPane();
 
         AnchorPane.setBottomAnchor(timerLabel, 30.0);
         AnchorPane.setRightAnchor(timerLabel, 30.0);
@@ -139,18 +147,25 @@ public class MainWindow extends Application {
         BorderPane.setAlignment(mistakeLabel, Pos.TOP_RIGHT);
         BorderPane.setMargin(mistakeLabel, new Insets(30, 30, 0, 0));
 
-
         root.setCenter(helloLabel);
-        root.setBottom(anchorPane);
         root.setTop(mistakeLabel);
 
-        primaryStage.setTitle("Fort Boyard");
-        Scene scene = new Scene(root, 1000, 500);
+        primaryStage.setTitle("Бешеные клавиши");
+        Scene scene = new Scene(root, 1024, 512);
 
         scene.setOnKeyPressed(this::handleOnKeyPressed);
 
+        primaryStage.setFullScreen(true);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        keyboardGame = new KeyboardGame();
+
+        gameQuizzes = keyboardGame.getGameQuizzes();
+        crazyKeys = new CrazyKeys(gameQuizzes[currentQuestion].getAnswer(), 5);
+
+        crazyKeys.getScreenSaverMP().setAutoPlay(true);
+        crazyKeys.getScreenSaverMP().play();
     }
 
     private void handleOnKeyPressed(KeyEvent event) {
@@ -158,58 +173,57 @@ public class MainWindow extends Application {
             if (gameStarted)
                 return;
 
+            root.setBottom(anchorPane);
             root.getChildren().remove(helloLabel);
-            keyboardGame = new KeyboardGame();
-            gameQuizzes = keyboardGame.getGameQuizzes();
+
             root.setCenter(keyboardGame);
 
-            crazyKeys = new CrazyKeys(gameQuizzes[currentQuestion].getAnswer(), 5);
             mistakeLabel.setText("Ошибок: " + Integer.toString(crazyKeys.getMistake()));
 
             startTimer();
+            crazyKeys.getScreenSaverMP().stop();
+
             gameStarted = true;
+
+            crazyKeys.getSprintMP().setAutoPlay(true);
+            crazyKeys.getSprintMP().play();
+
+            keyboardGame.showKeyboard();
+
             return;
         }
 
-//        if (crazyKeys != null && event.getText().length() > 0){
-//            if (!gameStarted)
-//                return;
-//
-//            crazyKeys.addSymbol(event.getText().charAt(0));
-//            mistakeLabel.setText("Ошибок: " + crazyKeys.getMistake());
-//            keyboardGame.getKeyBoardTextLabel().setText(crazyKeys.getText());
-//            if (keyboardGame.getKeyBoardTextLabel().getText().toLowerCase().equals(crazyKeys.getResultText())){
-//                score += 2;
-//                if (gameQuizzes.length - 1 == currentQuestion){
-//                    String winText = "Поздравляем с успешным прохождением испытания!\n" +
-//                            "Ваш набранный балл: " + score;
-//                    root.getChildren().remove(keyboardGame);
-//                    root.setCenter(new Label(winText));
-//                    crazyKeys.getWinMP().play();
-//                    timeline.stop();
-//                    gameStarted = false;
-//                    return;
-//                }
-//
-//                keyboardGame.showKeyboard();
-//                crazyKeys.setResultText(gameQuizzes[++currentQuestion].getAnswer());
-//                crazyKeys.setText("");
-//                keyboardGame.getKeyBoardTextLabel().setText("");
-//                keyboardGame.getQuestionLabel().setText(gameQuizzes[currentQuestion].getQuestion());
-//                scoreLabel.setText("Очки: " + score);
-//            }
-//            if (crazyKeys.getMistake() == 0){
-//                String looseText = "Количество допустимых ошибок исчерпано\n" +
-//                        "Ваш набранный балл: " + score;
-//                root.getChildren().remove(keyboardGame);
-//                root.setCenter(new Label(looseText));
-//                timeline.stop();
-//            }
-//        }
+        if (crazyKeys != null && event.getText().length() > 0){
+            if (!gameStarted) {
+                return;
+            }
+
+            crazyKeys.addSymbol(event.getText().charAt(0));
+            mistakeLabel.setText("Ошибок: " + crazyKeys.getMistake());
+            keyboardGame.getKeyBoardTextLabel().setText(crazyKeys.getText());
+            if (keyboardGame.getKeyBoardTextLabel().getText().toLowerCase().equals(crazyKeys.getResultText())){
+                score += 2;
+                if (gameQuizzes.length - 1 == currentQuestion){
+                    showWinTextLabel();
+                    gameStarted = false;
+                    return;
+                }
+
+                keyboardGame.showKeyboard();
+                crazyKeys.setResultText(gameQuizzes[++currentQuestion].getAnswer());
+                crazyKeys.setText("");
+                keyboardGame.getKeyBoardTextLabel().setText("");
+                keyboardGame.getQuestionLabel().setText(gameQuizzes[currentQuestion].getQuestion());
+                scoreLabel.setText("Очки: " + score);
+            }
+            if (crazyKeys.getMistake() == 0){
+                showLooseTextLabel();
+            }
+        }
     }
 
     private void startTimer(){
-        timeSeconds = 420;
+        timeSeconds = 7 * 60;
         timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.getKeyFrames().add(
@@ -224,8 +238,37 @@ public class MainWindow extends Application {
 
                             if (timeSeconds <= 0) {
                                 timeline.stop();
+                                showLooseTextLabel();
                             }
                         }));
-        timeline.playFromStart();
+        timeline.play();
+    }
+
+    private void showLooseTextLabel(){
+        String looseText = "Количество допустимых ошибок исчерпано\n" +
+                "Ваш набранный балл: " + score;
+        scoreLabel.setText("Очки: " + score);
+
+        Label looseTextLabel = new Label(looseText);
+        looseTextLabel.setFont(new Font(25));
+        root.getChildren().remove(keyboardGame);
+        root.setCenter(looseTextLabel);
+        timeline.stop();
+        crazyKeys.getSprintMP().stop();
+    }
+
+    private void showWinTextLabel(){
+        String winText = "Поздравляем с успешным прохождением испытания!\n" +
+                "Ваш набранный балл: " + score;
+
+        scoreLabel.setText("Очки: " + score);
+
+        Label winTextLabel = new Label(winText);
+        winTextLabel.setFont(new Font(25));
+        root.getChildren().remove(keyboardGame);
+        root.setCenter(winTextLabel);
+        crazyKeys.getWinMP().play();
+        timeline.stop();
+        crazyKeys.getSprintMP().stop();
     }
 }
