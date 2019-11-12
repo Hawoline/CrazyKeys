@@ -1,7 +1,5 @@
 package ru.hawoline.crazykeys.model;
 
-import java.util.Objects;
-
 public class Quiz {
 
     private String question;

@@ -1,4 +1,4 @@
-package ru.hawoline.crazykeys.pane;
+package ru.hawoline.crazykeys.controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -8,17 +8,22 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import ru.hawoline.crazykeys.model.CrazyKeys;
 import ru.hawoline.crazykeys.model.Quiz;
+import ru.hawoline.crazykeys.util.Utils;
+
+import java.io.IOException;
 
 public class MainWindow extends Application {
 
@@ -40,11 +45,11 @@ public class MainWindow extends Application {
 
     public static Quiz[] quizzes = new Quiz[13];
 
-    Quiz[] gameQuizzes;
+    private Quiz[] gameQuizzes;
     private int currentQuestion = 0;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
 
         String[] questions = {
                 "Висит груша нельзя скушать",
@@ -155,17 +160,14 @@ public class MainWindow extends Application {
 
         scene.setOnKeyPressed(this::handleOnKeyPressed);
 
-        primaryStage.setFullScreen(true);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
         keyboardGame = new KeyboardGame();
 
         gameQuizzes = keyboardGame.getGameQuizzes();
-        crazyKeys = new CrazyKeys(gameQuizzes[currentQuestion].getAnswer(), 5);
+        crazyKeys = new CrazyKeys(gameQuizzes[currentQuestion].getAnswer(), 20);
 
-        crazyKeys.getScreenSaverMP().setAutoPlay(true);
-        crazyKeys.getScreenSaverMP().play();
+        primaryStage.setFullScreen(true);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     private void handleOnKeyPressed(KeyEvent event) {
@@ -178,15 +180,11 @@ public class MainWindow extends Application {
 
             root.setCenter(keyboardGame);
 
-            mistakeLabel.setText("Ошибок: " + Integer.toString(crazyKeys.getMistake()));
+            mistakeLabel.setText("Ошибок: " + crazyKeys.getMistake());
 
             startTimer();
-            crazyKeys.getScreenSaverMP().stop();
 
             gameStarted = true;
-
-            crazyKeys.getSprintMP().setAutoPlay(true);
-            crazyKeys.getSprintMP().play();
 
             keyboardGame.showKeyboard();
 
@@ -206,6 +204,7 @@ public class MainWindow extends Application {
                 if (gameQuizzes.length - 1 == currentQuestion){
                     showWinTextLabel();
                     gameStarted = false;
+                    score = 0;
                     return;
                 }
 
@@ -216,6 +215,7 @@ public class MainWindow extends Application {
                 keyboardGame.getQuestionLabel().setText(gameQuizzes[currentQuestion].getQuestion());
                 scoreLabel.setText("Очки: " + score);
             }
+
             if (crazyKeys.getMistake() == 0){
                 showLooseTextLabel();
             }
@@ -223,7 +223,7 @@ public class MainWindow extends Application {
     }
 
     private void startTimer(){
-        timeSeconds = 7 * 60;
+        timeSeconds = 10 * 60;
         timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.getKeyFrames().add(
@@ -254,7 +254,6 @@ public class MainWindow extends Application {
         root.getChildren().remove(keyboardGame);
         root.setCenter(looseTextLabel);
         timeline.stop();
-        crazyKeys.getSprintMP().stop();
     }
 
     private void showWinTextLabel(){
@@ -267,8 +266,6 @@ public class MainWindow extends Application {
         winTextLabel.setFont(new Font(25));
         root.getChildren().remove(keyboardGame);
         root.setCenter(winTextLabel);
-        crazyKeys.getWinMP().play();
         timeline.stop();
-        crazyKeys.getSprintMP().stop();
     }
 }

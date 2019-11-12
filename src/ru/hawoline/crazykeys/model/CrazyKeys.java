@@ -1,34 +1,17 @@
 package ru.hawoline.crazykeys.model;
 
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-
-import java.io.File;
 
 public class CrazyKeys {
 
     private String resultText;
     private String text;
 
-    private MediaPlayer winMP;
-    private MediaPlayer looseMP;
-    private MediaPlayer correctMP;
-    private MediaPlayer mistakeMP;
-    private MediaPlayer sprintMP;
-    private MediaPlayer screenSaverMP;
-
     private int mistake;
 
     public CrazyKeys(String resultText, int mistake) {
         this.resultText = resultText;
         this.mistake = mistake;
-
-        winMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/win.mp3");
-        looseMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/loose.mp3");
-        correctMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/correct.mp3");
-        mistakeMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/mistake.mp3");
-        sprintMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/sprint.mp3");
-        screenSaverMP = getMediaPlayer("C:/Users/user/IdeaProjects/Crazy Keys/src/ru/hawoline/crazykeys/pane/res/music/screen_saver.mp3");
 
         text = "";
     }
@@ -49,38 +32,6 @@ public class CrazyKeys {
         this.text = text;
     }
 
-    public MediaPlayer getWinMP() {
-        return winMP;
-    }
-
-    public void setWinMP(MediaPlayer winMP) {
-        this.winMP = winMP;
-    }
-
-    public MediaPlayer getLooseMP() {
-        return looseMP;
-    }
-
-    public void setLooseMP(MediaPlayer looseMP) {
-        this.looseMP = looseMP;
-    }
-
-    public MediaPlayer getCorrectMP() {
-        return correctMP;
-    }
-
-    public void setCorrectMP(MediaPlayer correctMP) {
-        this.correctMP = correctMP;
-    }
-
-    public MediaPlayer getMistakeMP() {
-        return mistakeMP;
-    }
-
-    public void setMistakeMP(MediaPlayer mistakeMP) {
-        this.mistakeMP = mistakeMP;
-    }
-
     public int getMistake() {
         return mistake;
     }
@@ -89,24 +40,7 @@ public class CrazyKeys {
         this.mistake = mistake;
     }
 
-    public MediaPlayer getSprintMP() {
-        return sprintMP;
-    }
-
-    public void setSprintMP(MediaPlayer sprintMP) {
-        this.sprintMP = sprintMP;
-    }
-
-    public MediaPlayer getScreenSaverMP() {
-        return screenSaverMP;
-    }
-
-    public void setScreenSaverMP(MediaPlayer screenSaverMP) {
-        this.screenSaverMP = screenSaverMP;
-    }
-
     public void addSymbol(char symbol){
-        mistakeMP.stop();
         if (text.length() < resultText.length()) {
             if (mistake != 0){
                 if (isTrueSymbol(symbol)) {
@@ -115,13 +49,8 @@ public class CrazyKeys {
                     text = stringBuilder.toString();
                 } else {
                     mistake--;
-                    mistakeMP.play();
                 }
-            } else {
-                looseMP.play();
             }
-        } else {
-            correctMP.play();
         }
     }
 
@@ -132,11 +61,5 @@ public class CrazyKeys {
     public void removeSymbol(char symbol){
         if (!isTrueSymbol(symbol))
             resultText.replace(resultText.charAt(resultText.length() - 1), ' ');
-    }
-
-    public static MediaPlayer getMediaPlayer(String path){
-        Media media = new Media(new File(path).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        return mediaPlayer;
     }
 }

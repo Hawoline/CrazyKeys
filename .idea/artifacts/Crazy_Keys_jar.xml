@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Crazy Keys:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Crazy_Keys_jar</output-path>
+    <root id="archive" name="Crazy Keys.jar">
+      <element id="module-output" name="Crazy Keys" />
+    </root>
+  </artifact>
+</component>

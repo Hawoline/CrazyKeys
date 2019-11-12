@@ -1,4 +1,4 @@
-package ru.hawoline.crazykeys.pane;
+package ru.hawoline.crazykeys.controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -52,6 +52,8 @@ public class KeyboardGame extends VBox {
 
         getChildren().addAll(questionLabel, keyBoardTextLabel, keyBoardIV);
         showKeyboard();
+
+        System.out.println(System.getProperty("user.dir"));
     }
 
     public Label getQuestionLabel() {
